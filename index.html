@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Калькулятор печати на кружках</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+        line-height: 1.6;
+    }
+    .block { margin-bottom: 20px; }
+    label { display:block; margin: 5px 0; }
+    select, input[type="number"] { width: 220px; padding: 5px; }
+</style>
+</head>
+<body>
+
+<h2>Калькулятор печати на кружках</h2>
+
+<form id="calcForm">
+
+    <!-- количество -->
+    <div class="block">
+        <label>
+            Количество:
+            <input type="number" id="qty" min="1" value="1" required>
+        </label>
+    </div>
+
+    <!-- тип товара -->
+    <div class="block">
+        <div><strong>Тип кружки:</strong></div>
+
+        <label><input type="radio" name="type" value="1" checked> Белая кружка (300 ₽)</label>
+        <label><input type="radio" name="type" value="2"> Кружка-хамелеон (500 ₽)</label>
+        <label><input type="radio" name="type" value="3"> Кружка с ложкой (450 ₽)</label>
+    </div>
+
+    <!-- опции для типа 2 -->
+    <div class="block" id="optionsBlock" style="display:none;">
+        <label>
+            Вид печати:
+            <select id="options">
+                <option value="150">Малый рисунок (+150)</option>
+                <option value="300">Средний рисунок (+300)</option>
+                <option value="500">Полная обтяжка (+500)</option>
+            </select>
+        </label>
+    </div>
+
+    <!-- свойство для типа 3 -->
+    <div class="block" id="propertyBlock" style="display:none;">
+        <label>
+            <input type="checkbox" id="property" value="200">
+            Подарочная коробка (+200)
+        </label>
+    </div>
+
+</form>
+
+<h3>Стоимость: <span id="result">0</span> ₽</h3>
+
+<script>
+// базовые цены
+const basePrice = {
+    1: 300, // белая кружка
+    2: 500, // хамелеон
+    3: 450  // с ложкой
+};
+
+// элементы
+const qtyInput = document.getElementById("qty");
+const optionsBlock = document.getElementById("optionsBlock");
+const propertyBlock = document.getElementById("propertyBlock");
+const options = document.getElementById("options");
+const property = document.getElementById("property");
+const result = document.getElementById("result");
+const typeRadios = document.querySelectorAll('input[name="type"]');
+
+// пересчёт стоимости
+function calculate() {
+    let qty = Number(qtyInput.value);
+    let type = Number(document.querySelector('input[name="type"]:checked').value);
+
+    let price = basePrice[type];
+
+    if (type === 2) { // у хамелеона есть опции
+        price += Number(options.value);
+    }
+
+    if (type === 3 && property.checked) { // у кружки с ложкой есть свойство
+        price += Number(property.value);
+    }
+
+    result.textContent = price * qty;
+}
+
+// переключение отображаемых блоков
+function updateVisibility() {
+    let type = Number(document.querySelector('input[name="type"]:checked').value);
+
+    optionsBlock.style.display = (type === 2) ? "block" : "none";
+    propertyBlock.style.display = (type === 3) ? "block" : "none";
+
+    calculate();
+}
+
+qtyInput.addEventListener("input", calculate);
+options.addEventListener("change", calculate);
+property.addEventListener("change", calculate);
+typeRadios.forEach(r => r.addEventListener("change", updateVisibility));
+
+calculate();
+</script>
+
+</body>
+</html>
