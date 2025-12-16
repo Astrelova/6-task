@@ -63,6 +63,8 @@
 <h3>Стоимость: <span id="result">0</span> ₽</h3>
 
 <script>
+// === ДОМЕН САЙТА: mugcalc.ru ===
+
 // базовые цены
 const basePrice = {
     1: 300, // белая кружка
@@ -81,6 +83,11 @@ const typeRadios = document.querySelectorAll('input[name="type"]');
 
 // пересчёт стоимости
 function calculate() {
+    // Защита от отрицательных чисел
+    if (qtyInput.value < 1) {
+        qtyInput.value = 1;
+    }
+    
     let qty = Number(qtyInput.value);
     let type = Number(document.querySelector('input[name="type"]:checked').value);
 
@@ -107,7 +114,14 @@ function updateVisibility() {
     calculate();
 }
 
-qtyInput.addEventListener("input", calculate);
+// Обработка ввода - защита от отрицательных чисел
+qtyInput.addEventListener("input", function() {
+    if (this.value < 1) {
+        this.value = 1;
+    }
+    calculate();
+});
+
 options.addEventListener("change", calculate);
 property.addEventListener("change", calculate);
 typeRadios.forEach(r => r.addEventListener("change", updateVisibility));
