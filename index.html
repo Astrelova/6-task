@@ -63,7 +63,7 @@
 <h3>Стоимость: <span id="result">0</span> ₽</h3>
 
 <script>
-// === ДОМЕН САЙТА: mugcalc.ru ===
+// === РАБОТА С DOM (Document Object Model) ===
 
 // базовые цены
 const basePrice = {
@@ -72,7 +72,7 @@ const basePrice = {
     3: 450  // с ложкой
 };
 
-// элементы
+// ПОЛУЧЕНИЕ ЭЛЕМЕНТОВ ИЗ DOM
 const qtyInput = document.getElementById("qty");
 const optionsBlock = document.getElementById("optionsBlock");
 const propertyBlock = document.getElementById("propertyBlock");
@@ -81,40 +81,45 @@ const property = document.getElementById("property");
 const result = document.getElementById("result");
 const typeRadios = document.querySelectorAll('input[name="type"]');
 
-// пересчёт стоимости
+// Функция для работы с DOM элементами
 function calculate() {
-    // Защита от отрицательных чисел
+    // Защита от отрицательных чисел через DOM свойство value
     if (qtyInput.value < 1) {
-        qtyInput.value = 1;
+        qtyInput.value = 1; // Изменение значения в DOM
     }
     
+    // Получение значений из DOM элементов
     let qty = Number(qtyInput.value);
     let type = Number(document.querySelector('input[name="type"]:checked').value);
 
     let price = basePrice[type];
 
-    if (type === 2) { // у хамелеона есть опции
-        price += Number(options.value);
+    // Работа с DOM элементами опций
+    if (type === 2) {
+        price += Number(options.value); // Получение значения из select
     }
 
-    if (type === 3 && property.checked) { // у кружки с ложкой есть свойство
+    // Работа с DOM элементом checkbox
+    if (type === 3 && property.checked) {
         price += Number(property.value);
     }
 
+    // Изменение содержимого DOM элемента
     result.textContent = price * qty;
 }
 
-// переключение отображаемых блоков
+// Функция для изменения видимости элементов в DOM
 function updateVisibility() {
     let type = Number(document.querySelector('input[name="type"]:checked').value);
 
+    // Изменение стилей DOM элементов
     optionsBlock.style.display = (type === 2) ? "block" : "none";
     propertyBlock.style.display = (type === 3) ? "block" : "none";
 
     calculate();
 }
 
-// Обработка ввода - защита от отрицательных чисел
+// НАВЕШИВАНИЕ СОБЫТИЙ НА DOM ЭЛЕМЕНТЫ
 qtyInput.addEventListener("input", function() {
     if (this.value < 1) {
         this.value = 1;
@@ -124,9 +129,17 @@ qtyInput.addEventListener("input", function() {
 
 options.addEventListener("change", calculate);
 property.addEventListener("change", calculate);
+
+// Для каждого radio кнопки добавляем обработчик события
 typeRadios.forEach(r => r.addEventListener("change", updateVisibility));
 
+// Инициализация при загрузке DOM
 calculate();
+
+// Альтернативный способ - ждём полной загрузки DOM
+// document.addEventListener('DOMContentLoaded', function() {
+//     calculate();
+// });
 </script>
 
 </body>
